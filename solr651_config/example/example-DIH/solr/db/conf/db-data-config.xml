@@ -1,0 +1,20 @@
+<dataConfig>
+	<dataSource name="jdbcSource" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/zs" user="root" password="root"/>
+    <document>
+        <entity name="incident" dataSource="jdbcSource" query="select id, cat1, cat2, cat3, cat4, cat5, title, description, create_time, create_by, update_time, update_by from incident">
+		  <field column="ID" name="id"/>
+		  <field column="CAT1" name="cat1" />
+          <field column="CAT2" name="cat2" />
+          <field column="CAT3" name="cat3" />
+          <field column="CAT4" name="cat4" />
+          <field column="CAT5" name="cat5" />
+          <field column="TITLE" name="title" />
+          <field column="DESCRIPTION" name="description" />
+          <field column="CREATE_TIME" name="create_time" />
+           <field column="CREATE_BY" name="create_by" />
+            <field column="UPDATE_TIME" name="update_time" />
+             <field column="UPDATE_BY" name="update_by" />
+		</entity>
+    </document>
+</dataConfig>
+
