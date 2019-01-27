@@ -57,3 +57,11 @@ https://echarts.baidu.com/index.html
 
 https://edu.gcfglobal.org/en/excel2013/charts/1/
 https://support.office.com/en-us/article/create-a-chart-from-start-to-finish-0baf399e-dd61-4e18-8a73-b3fd5d5680c2
+
+
+## react app
+
+- filter logic
+- highlight
+- pagination
+
