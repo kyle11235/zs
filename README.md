@@ -1,5 +1,5 @@
 
-# react + nodejs + solr + mysql + echarts + excel + auth and comments?
+# react + nodejs + solr + mysql + echarts + excel + auth and description?
 
 
 ## solr
@@ -61,7 +61,5 @@ https://support.office.com/en-us/article/create-a-chart-from-start-to-finish-0ba
 
 ## react app
 
-- filter logic
-- highlight
 - pagination
 

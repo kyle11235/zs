@@ -284,6 +284,7 @@
         or to add multiple fields to the same field for easier/faster searching.  -->
 
   <!--kyle-->
+   <copyField source="id" dest="text"/>
    <copyField source="cat1" dest="text"/>
    <copyField source="cat2" dest="text"/>
    <copyField source="cat3" dest="text"/>

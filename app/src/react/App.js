@@ -1,5 +1,6 @@
 const baseUrl = 'http://localhost:8983/solr/db/select';
 const cats = ["cat1","cat2","cat3","cat4","cat5"];
+const fields = cats.concat(['id','title','description','create_time','create_by','update_time','update_by']);
 
 class App extends React.Component {
   constructor(props) {
@@ -15,7 +16,8 @@ class App extends React.Component {
           facet_fields:{}
         }
       },
-      filters:{}
+      filters:{},
+      highlighting: {}
     };
 
     cats.forEach(cat => {
@@ -71,18 +73,11 @@ class App extends React.Component {
         // filters
         console.log('filters=' + JSON.stringify(currentState.filters));
         for(cat in currentState.filters){
-          let values = [];
           let filter = currentState.filters[cat];
           for(value in filter){
               if(filter[value] === true){
-                values.push(value);
+                q = q + 'AND (' + cat + ':' + value + ')';
               }
-          }
-
-          if(values.length > 0){
-            q = q + ' AND (';
-            q = q + values.map(value => '(' + cat + ':' + value + ')').join(' OR ');
-            q = q + ')';
           }
         }
         console.log('q=' + q);
@@ -92,7 +87,9 @@ class App extends React.Component {
           q:q,
           wt:"json",
           facet: "on",
-          "facet.field": cats
+          "facet.field": cats,
+          hl: "on",
+          "hl.fl": fields
         };
         $.ajax({
             type: "GET",
@@ -108,16 +105,20 @@ class App extends React.Component {
     });
   }
 
+  // get highlight
+  getHL(doc, field){
+    let hl = this.state.result.highlighting;
+    return {__html: hl[doc.id] && hl[doc.id][field]?hl[doc.id][field]:doc[field]};
+  }
 
   render() {
     
+    // filters
     let facet_fields = this.state.result.facet_counts.facet_fields;
 
     let filters = [];
     for(cat in facet_fields){
       let arr = facet_fields[cat];
-
-      
       let valueList = [];
       for(let i = 0; i< arr.length -1; i = i+2){
         let value = arr[i];
@@ -136,12 +137,14 @@ class App extends React.Component {
       for(let i = 0; i< valueList.length; i++){
         let value = valueList[i].value;
         let count = valueList[i].count;
-        let checked = this.state.filters[cat][value];
-        liList.push(
-            <li key={cat+value} className="nav-item">
-              <span className="nav-link"><input type="checkbox" checked={checked?checked:''} onChange={this.handleChangeFilter.bind(this, cat, value)}/> {value} ({count})</span>
-            </li>
-        );
+        if(count > 0){
+          let checked = this.state.filters[cat][value];
+          liList.push(
+              <li key={cat+value} className="nav-item">
+                <span className="nav-link"><input type="checkbox" checked={checked?checked:''} onChange={this.handleChangeFilter.bind(this, cat, value)}/> {value} ({count})</span>
+              </li>
+          );
+        }
       }
 
 
@@ -155,22 +158,24 @@ class App extends React.Component {
       );
     }
 
-
-    let docs = this.state.result.response.docs.map(doc =>
-        <div key={doc.id} className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+    // docs
+    let docs = this.state.result.response.docs.map(doc => {
+        let hl = this.state.result.highlighting;
+        
+        return <div key={doc.id} className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
           <div className="card" style={{width:"100%"}}>
             <div className="card-body">
-              <h5 className="card-title">{doc.title} (ID:{doc.id})</h5>
-              <p className="card-text">{doc.description}</p>
-              <p className="card-subtitle mb-2 text-muted">类别: {doc.cat1} > {doc.cat2} > {doc.cat3} > {doc.cat4} > {doc.cat5}</p>
-              <p className="card-subtitle mb-2 text-muted">创建时间: {doc.create_time}, 创建人: {doc.create_by}</p>
-              <p className="card-subtitle mb-2 text-muted">更新时间: {doc.update_time}, 更新人: {doc.update_by}</p>
+              <h5 className="card-title"><span dangerouslySetInnerHTML={this.getHL(doc, 'title')}/> (ID: <span dangerouslySetInnerHTML={this.getHL(doc, 'id')}/>)</h5>
+              <p className="card-text"><span dangerouslySetInnerHTML={this.getHL(doc, 'description')}/></p>
+              <p className="card-subtitle mb-2 text-muted">类别: <span dangerouslySetInnerHTML={this.getHL(doc, 'cat1')}/> > <span dangerouslySetInnerHTML={this.getHL(doc, 'cat2')}/> > <span dangerouslySetInnerHTML={this.getHL(doc, 'cat3')}/> > <span dangerouslySetInnerHTML={this.getHL(doc, 'cat4')}/> > <span dangerouslySetInnerHTML={this.getHL(doc, 'cat5')}/></p>
+              <p className="card-subtitle mb-2 text-muted">创建时间: <span dangerouslySetInnerHTML={this.getHL(doc, 'create_time')}/>, 创建人: <span dangerouslySetInnerHTML={this.getHL(doc, 'create_by')}/></p>
+              <p className="card-subtitle mb-2 text-muted">更新时间: <span dangerouslySetInnerHTML={this.getHL(doc, 'update_time')}/>, 更新人: <span dangerouslySetInnerHTML={this.getHL(doc, 'update_by')}/></p>
               <a href="#" className="card-link">Card link</a>
               <a href="#" className="card-link">Another link</a>
             </div>
           </div>
         </div> 
-    );
+    });
 
     return <div>
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
