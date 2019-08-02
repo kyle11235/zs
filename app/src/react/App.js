@@ -65,7 +65,7 @@ class App extends React.Component {
             }
           }).map(e => {
             return '"' + e + '"';
-          }).join(' OR ');
+          }).join(' AND ');
         }
         q = '(' + q + ')'
         console.log('q=' + q);

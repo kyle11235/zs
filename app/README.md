@@ -1,10 +1,11 @@
 # react-simple + bootstrap
 
-- copy bootstrap into js
+- react-simple
 
-- copy dashboard.html to folder of index.html
+- copy bootstrap lib into js
 
-- update js/css path, download jquery-3.3.1.min.js (no ajax in jquery-3.3.1.shim.min.js)
+- copy dashboard.html, update js/css path, download jquery-3.3.1.min.js (no ajax in jquery-3.3.1.shim.min.js), fix erros
 
-- fix erros, class -> className, style="" -> style={{}}
+- dashboard.html -> Dashboard.js -> class -> className, style="" -> style={{}}
 
+- copy to index.html/APP.js
